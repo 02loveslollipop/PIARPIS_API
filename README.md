@@ -1,20 +1,16 @@
-# Food Recomendation System API
+# PIARPIS API
 
-> A python API to exchange data between the Flutter Front-end, the MongoDB and and the FRS AI model.
+> A python API to exchange data between JS frontend and DB.
 
-## Food Recomendation System
-This repository is part of the Food Recomendation system project, the remaining repositories are listed below:
-
-- [Flutter Front-end](https://github.com/Arroyave03/FRS-Front)
-
-- [AI Model](https://github.com/faendal/FoodRecomendationSystem)
+## PIARPIS API
+This repository is part of the PIARPIS project, the remaining repositories are listed below:
 
 ## Installation
 To setup this repository you need to have python 3.11 installed in your machine, then you can install the dependencies with the following command:
 
 1. Clone the repository
 ```bash
-git clone https://github.com/02loveslollipop/Food-API.git
+git clone https://github.com/02loveslollipop/PIARPIS_API.git
 ```
 
 2. Create a python 3.11 environment using Conda (**Optional**)
@@ -48,8 +44,6 @@ python main.py
 This API is not intended to be used in production, it is only for testing purposes.
 
 As the API is intended to be used in a local network, it does not have any security measures, so it is not recommended to use it in a public network.
-
-To use the API you must execute also the MongoDB server and the [AI model](https://github.com/faendal/FoodRecomendationSystem).
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

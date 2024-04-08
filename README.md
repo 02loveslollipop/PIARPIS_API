@@ -36,7 +36,7 @@ cp example_config.yaml config.yaml
 6. Run the API
 
 ```bash
-python main.py
+python api.py
 ```
 
 ## Note

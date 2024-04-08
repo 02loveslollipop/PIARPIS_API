@@ -1,5 +1,9 @@
-mongo_uri: mongodb+srv://<user>:<password>@<ip>/?retryWrites=true&w=majority # Replace with your mongo uri
-ia: # Connection to IA microservice
-  ip: 127.0.0.1 # Replace with your IA microservice ip
-  port: 6969 # Replace with your IA microservice port
-  ia_token: verygoodpassword1234 # Replace with your IA microservice token (Key)
+mongo:
+  mongo_db: your_db_name
+  mongo_uri: db.yaml
+flask:
+  secret: root1234
+ia:
+  ip: 0.0.0.0
+  port: 5000
+  token: your_token

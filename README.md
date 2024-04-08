@@ -6,7 +6,7 @@
 This repository is part of the PIARPIS project, the remaining repositories are listed below:
 
 ## Installation
-To setup this repository you need to have python 3.11 installed in your machine, then you can install the dependencies with the following command:
+To setup this repository you need to have python 3.10+ installed in your machine, then you can install the dependencies with the following command:
 
 1. Clone the repository
 ```bash

@@ -13,7 +13,7 @@ To setup this repository you need to have python 3.11 installed in your machine,
 git clone https://github.com/02loveslollipop/PIARPIS_API.git
 ```
 
-2. Create a python 3.11 environment using Conda (**Optional**)
+2. Create a python 3.10 or later environment using Conda (**Optional**)
 
 ```bash
 conda create -n <env_name> python=3.11

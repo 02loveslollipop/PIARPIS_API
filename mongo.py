@@ -1,4 +1,3 @@
-import pandas as pd
 import yaml
 
 
@@ -57,6 +56,7 @@ class Collection:
                 return True
 
 if __name__ == '__main__':
+    import pandas as pd
     client = MongoClient('db.yaml')
     database = client['db']
     users_collection = database['Usr']

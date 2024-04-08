@@ -8,7 +8,6 @@ from functools import wraps
 from datetime import datetime as dt
 from flask_cors import CORS
 import hashlib
-import pandas as pd
 
 api = Flask(__name__)
 cors = CORS(api)
@@ -43,6 +42,37 @@ def checkPassword(username,password) -> bool: # check if the password is correct
         return True
     else:
         return False
+
+@api.route('/',methods=['GET'])
+def ping():
+    html = """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>PIARPIS API</title>
+        </head>
+        <body>
+
+            <h1>PIARPIS API</h1>
+            <p>the WSGI is working and the api is available. Finally...</p>
+            <!DOCTYPE html>
+<html>
+<head>
+<title>PIARPIS API</title>
+</head>
+<body>
+
+<h1>PIARPIS API</h1>
+<p>the WSGI is working and the api is available. Finally...</p>
+
+<iframe style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&controls=0&mute=0" title="YouTube video player" frameborder="0" allow="autoplay" allowfullscreen></iframe>
+
+</body>
+</html>
+        </body>
+    </html>
+        """
+    return html
 
 @api.route('/login', methods=['POST'])
 def login(): #Add user to session

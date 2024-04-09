@@ -21,7 +21,7 @@ def connect_to_database():
         client = MongoClient(conf.mongo_uri)
         return client['db']
     except Exception as e:
-        print(f"Error connecting to database: {e}")
+        print(f"Error connecting to database ----> {e}")
         raise e
 
 def login_required(func): # Wrapper to check if the user is in session if required
@@ -33,7 +33,7 @@ def login_required(func): # Wrapper to check if the user is in session if requir
                 return jsonify({'message': 'user not in session'}), 401
             return func(*args, **kwargs)
         except Exception as e:
-            print(f"Error checking if user is in session: {e}")
+            print(f"Error checking if user is in session ----> {e}")
             return jsonify({'message': 'error checking if user is in session'}), 500
     return wrapper
 
@@ -52,7 +52,7 @@ def checkPassword(username,password) -> bool: # check if the password is correct
         else:
             return False
     except Exception as e:
-        print(f"Error checking password: {e}")
+        print(f"Error checking password ----> {e}")
         return False
 
 @api.route('/',methods=['GET'])
@@ -82,13 +82,13 @@ def login(): #Add user to session
         
         if checkPassword(username,password):
             username_hash = hashlib.sha256((username + dt.now.__str__()).encode()).hexdigest()
-            print(f"User {username} logged in as {username_hash}")
+            print(f"------------------User {username} logged in as {username_hash}------------------")
             session.append(username_hash)
             return jsonify({'secretAuth': username_hash}), 200
         else:
             return jsonify({'message': 'login failed'}), 401
     except Exception as e:
-        print(f"Error logging in: {e}")
+        print(f"Error logging in ----> {e}")
         return jsonify({'message': 'error logging in'}), 500
 
 @api.route('/logout')
@@ -99,7 +99,7 @@ def logout(): #Remove user from session
         session.pop(username_hash)
         return jsonify({'message': 'logout successful'}), 200
     except Exception as e:
-        print(f"Error logging out: {e}")
+        print(f"Error logging out ----> {e}")
         return jsonify({'message': 'error logging out'}), 500
 
 @api.route('/insert', methods=['POST'])
@@ -115,10 +115,11 @@ def addToDB():
         database = connect_to_database()
         parking_collection = database['Parkings']
         username = len(parking_collection.data) + 1
+        print(f"Adding to parking register ----> {username} {name} {plate} {invoice} {inicial_time} {final_time}")
         parking_collection.insert_one({'Id': username, 'name': name, 'plate': plate, 'invoice': invoice, 'in_time': inicial_time, 'out_time': final_time})
         return jsonify({'message': 'added to parking register'}), 200 #TODO: search a less silly message
     except Exception as e:
-        print(f"Error adding to parking register: {e}")
+        print(f"Error adding to parking register ----> {e}")
         return jsonify({'message': 'error adding to parking register'}), 500
 
 @api.route('/get', methods=['GET'])
@@ -136,7 +137,7 @@ def getParkingDB(): # get all the recipes of the user
         response = jsonify(parkings)
         return response, 200
     except Exception as e:
-        print(f"Error getting parkings: {e}")
+        print(f"Error getting parkings ----> {e}")
         return jsonify({'message': 'error getting parkings'}), 500
 if __name__ == '__main__':
     api.run(debug=True, host='0.0.0.0', port=6970)

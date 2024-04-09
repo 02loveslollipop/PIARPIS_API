@@ -95,7 +95,7 @@ def addToDB():
     parking_collection.insert_one({'Id': username, 'name': name, 'plate': plate, 'invoice': invoice, 'inicial_time': inicial_time})
     return jsonify({'message': 'added to parking register'}), 200 #TODO: search a less silly message
 
-@api.route('/get_parkings_db', methods=['GET'])
+@api.route('/get', methods=['GET'])
 @login_required
 def getParkingDB(): # get all the recipes of the user
     username = request.headers.get('user')

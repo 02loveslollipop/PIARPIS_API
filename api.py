@@ -84,15 +84,16 @@ def logout(): #Remove user from session
 @api.route('/insert', methods=['POST'])
 @login_required
 def addToDB():
-    username = request.json.get('Id')
     name = request.json.get('name')
     plate = request.json.get('plate')
     invoice = request.json.get('invoice')
     inicial_time = request.json.get('inicial_time')
+    final_time = request.json.get('final_time')
 
     database = connect_to_database()
     parking_collection = database['Parkings']
-    parking_collection.insert_one({'Id': username, 'name': name, 'plate': plate, 'invoice': invoice, 'inicial_time': inicial_time})
+    username = len(parking_collection.data) + 1
+    parking_collection.insert_one({'Id': username, 'name': name, 'plate': plate, 'invoice': invoice, 'in_time': inicial_time, 'out_time': final_time})
     return jsonify({'message': 'added to parking register'}), 200 #TODO: search a less silly message
 
 @api.route('/get', methods=['GET'])
@@ -112,11 +113,11 @@ if __name__ == '__main__':
     api.run(debug=True, host='0.0.0.0', port=6970)
     
 '''
-curl -X POST http://localhost:6970/login -H "Content-Type: application/json" -d '{"username": "admin", "password": "admin"}'
+curl -X POST https://02loveslollipop.pythonanywhere.com/login -H "Content-Type: application/json" -d '{"username": "admin@piarpis.com", "password": "admin"}'
 
-curl -X GET http://localhost:6970/logout -H "hash:<replace with the hash from the login response>" #printed in the console when the user logs in
+curl -X GET https://02loveslollipop.pythonanywhere.com/logout -H "hash:<replace with the hash from the login response>" #printed in the console when the user logs in
 
-curl -X POST http://localhost:6970/insert_to_db -H "Content-Type: application/json, hash: <replace with the hash from the login response>" -d '{"Id": "1", "name": "test", "plate": "test", "invoice": "test", "inicial_time": "test"}'
+curl -X POST https://02loveslollipop.pythonanywhere.com/insert -H "Content-Type: application/json, hash: <replace with the hash from the login response>" -d '{"Id": "1", "name": "test", "plate": "test", "invoice": "test", "inicial_time": "test", "final_time": "test"}'
 
-curl -X GET http://localhost:6970/get_parkings_db -H "hash: <replace with the hash from the login response>"
+curl -X GET https://02loveslollipop.pythonanywhere.com/get -H "hash: <replace with the hash from the login response>"
 '''

@@ -17,30 +17,42 @@ conf = config()
 session = []
 
 def connect_to_database():
-    client = MongoClient(conf.mongo_uri)
-    return client['db']
+    try:
+        client = MongoClient(conf.mongo_uri)
+        return client['db']
+    except Exception as e:
+        print(f"Error connecting to database: {e}")
+        raise e
 
 def login_required(func): # Wrapper to check if the user is in session if required
     @wraps(func)
     def wrapper(*args, **kwargs):
-        username_hash = request.headers.get('hash')
-        if username_hash not in session:
-            return jsonify({'message': 'user not in session'}), 401
-        return func(*args, **kwargs)
+        try:
+            username_hash = request.headers.get('hash')
+            if username_hash not in session:
+                return jsonify({'message': 'user not in session'}), 401
+            return func(*args, **kwargs)
+        except Exception as e:
+            print(f"Error checking if user is in session: {e}")
+            return jsonify({'message': 'error checking if user is in session'}), 500
     return wrapper
 
 def checkPassword(username,password) -> bool: # check if the password is correct
-    database = connect_to_database()
-    users_collection = database['Usr']
-    user = users_collection.find_one({'name': username})
-    if not user:
-        return False
-    
-    hashed_password = user['_password']
+    try:
+        database = connect_to_database()
+        users_collection = database['Usr']
+        user = users_collection.find_one({'name': username})
+        if not user:
+            return False
         
-    if f"{password}" == f"{hashed_password}":
-        return True
-    else:
+        hashed_password = user['_password']
+            
+        if f"{password}" == f"{hashed_password}":
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(f"Error checking password: {e}")
         return False
 
 @api.route('/',methods=['GET'])
@@ -64,51 +76,67 @@ def ping():
 
 @api.route('/login', methods=['POST'])
 def login(): #Add user to session
-    username = request.json.get('username')
-    password = request.json.get('password')
-    
-    if checkPassword(username,password):
-        username_hash = hashlib.sha256((username + dt.now.__str__()).encode()).hexdigest()
-        session.append(username_hash)
-        return jsonify({'secretAuth': username_hash}), 200
-    else:
-        return jsonify({'message': 'login failed'}), 401
+    try:
+        username = request.json.get('username')
+        password = request.json.get('password')
+        
+        if checkPassword(username,password):
+            username_hash = hashlib.sha256((username + dt.now.__str__()).encode()).hexdigest()
+            session.append(username_hash)
+            return jsonify({'secretAuth': username_hash}), 200
+        else:
+            return jsonify({'message': 'login failed'}), 401
+    except Exception as e:
+        print(f"Error logging in: {e}")
+        return jsonify({'message': 'error logging in'}), 500
 
 @api.route('/logout')
 @login_required
 def logout(): #Remove user from session
-    username_hash = request.headers.get('hash')
-    session.pop(username_hash)
-    return jsonify({'message': 'logout successful'}), 200
+    try:
+        username_hash = request.headers.get('hash')
+        session.pop(username_hash)
+        return jsonify({'message': 'logout successful'}), 200
+    except Exception as e:
+        print(f"Error logging out: {e}")
+        return jsonify({'message': 'error logging out'}), 500
 
 @api.route('/insert', methods=['POST'])
 @login_required
 def addToDB():
-    name = request.json.get('name')
-    plate = request.json.get('plate')
-    invoice = request.json.get('invoice')
-    inicial_time = request.json.get('inicial_time')
-    final_time = request.json.get('final_time')
+    try:
+        name = request.json.get('name')
+        plate = request.json.get('plate')
+        invoice = request.json.get('invoice')
+        inicial_time = request.json.get('inicial_time')
+        final_time = request.json.get('final_time')
 
-    database = connect_to_database()
-    parking_collection = database['Parkings']
-    username = len(parking_collection.data) + 1
-    parking_collection.insert_one({'Id': username, 'name': name, 'plate': plate, 'invoice': invoice, 'in_time': inicial_time, 'out_time': final_time})
-    return jsonify({'message': 'added to parking register'}), 200 #TODO: search a less silly message
+        database = connect_to_database()
+        parking_collection = database['Parkings']
+        username = len(parking_collection.data) + 1
+        parking_collection.insert_one({'Id': username, 'name': name, 'plate': plate, 'invoice': invoice, 'in_time': inicial_time, 'out_time': final_time})
+        return jsonify({'message': 'added to parking register'}), 200 #TODO: search a less silly message
+    except Exception as e:
+        print(f"Error adding to parking register: {e}")
+        return jsonify({'message': 'error adding to parking register'}), 500
 
 @api.route('/get', methods=['GET'])
 @login_required
 def getParkingDB(): # get all the recipes of the user
-    username = request.headers.get('user')
+    try:
+        username = request.headers.get('user')
 
-    database = connect_to_database()
-    parking_collection = database['Parkings']
-    parkings = parking_collection.data
-    if len(parkings) == 0:
-        return jsonify({'message': 'No parkings found'}), 404
-    
-    response = jsonify(parkings)
-    return response, 200 
+        database = connect_to_database()
+        parking_collection = database['Parkings']
+        parkings = parking_collection.data
+        if len(parkings) == 0:
+            return jsonify({'message': 'No parkings found'}), 404
+        
+        response = jsonify(parkings)
+        return response, 200
+    except Exception as e:
+        print(f"Error getting parkings: {e}")
+        return jsonify({'message': 'error getting parkings'}), 500
 if __name__ == '__main__':
     api.run(debug=True, host='0.0.0.0', port=6970)
     

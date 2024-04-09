@@ -70,14 +70,6 @@ def login(): #Add user to session
     if checkPassword(username,password):
         username_hash = hashlib.sha256((username + dt.now.__str__()).encode()).hexdigest()
         session.append(username_hash)
-        #curl to logout the user
-        print("--------CURL COMMANDS--------")
-        print( f"curl -X GET http://localhost:6970/logout -H 'secret:{username_hash}'\n\n")
-        #curl to insert to db
-        print( f"curl -X POST http://localhost:6970/insert_to_db -H 'Content-Type: application/json' -H 'hash: {username_hash}' -d '{{\"Id\": \"1\", \"name\": \"test\", \"plate\": \"test\", \"invoice\": \"test\", \"inicial_time\": \"test\"}}'\n\n")
-        #curl to get parkings
-        print( f"curl -X GET http://localhost:6970/get_parkings_db -H 'hash: {username_hash}'\n\n")
-        print("--------CURL COMMANDS--------")
         return jsonify({'secretAuth': username_hash}), 200
     else:
         return jsonify({'message': 'login failed'}), 401

@@ -6,14 +6,14 @@
 This repository is part of the PIARPIS project, the remaining repositories are listed below:
 
 ## Installation
-To setup this repository you need to have python 3.11 installed in your machine, then you can install the dependencies with the following command:
+To setup this repository you need to have python 3.10+ installed in your machine, then you can install the dependencies with the following command:
 
 1. Clone the repository
 ```bash
 git clone https://github.com/02loveslollipop/PIARPIS_API.git
 ```
 
-2. Create a python 3.11 environment using Conda (**Optional**)
+2. Create a python 3.10 or later environment using Conda (**Optional**)
 
 ```bash
 conda create -n <env_name> python=3.11

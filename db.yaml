@@ -1,9 +1,9 @@
 Usr:
-  - name: "admin"
+  - name: "admin@piarpis.com"
     _password: "admin"
-  - name: "user"
+  - name: "user@piarpis.com"
     _password: "user"
-  - name: "andres_felipe"
+  - name: "andres.felipe@piarpis.com"
     _password: "1234"
 
 Parkings:

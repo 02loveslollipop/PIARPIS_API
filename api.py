@@ -90,7 +90,7 @@ def logout(): #Remove user from session
     session.pop(username_hash)
     return jsonify({'message': 'logout successful'}), 200
 
-@api.route('/insert_to_db', methods=['POST'])
+@api.route('/insert', methods=['POST'])
 @login_required
 def addToDB():
     username = request.json.get('Id')

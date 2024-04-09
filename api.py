@@ -82,6 +82,7 @@ def login(): #Add user to session
         
         if checkPassword(username,password):
             username_hash = hashlib.sha256((username + dt.now.__str__()).encode()).hexdigest()
+            print(f"User {username} logged in as {username_hash}")
             session.append(username_hash)
             return jsonify({'secretAuth': username_hash}), 200
         else:

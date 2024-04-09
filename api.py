@@ -147,7 +147,7 @@ curl -X POST https://02loveslollipop.pythonanywhere.com/login -H "Content-Type: 
 
 curl -X GET https://02loveslollipop.pythonanywhere.com/logout -H "hash:<replace with the hash from the login response>" #printed in the console when the user logs in
 
-curl -X POST https://02loveslollipop.pythonanywhere.com/insert -H "Content-Type: application/json, hash: <replace with the hash from the login response>" -d '{"Id": "1", "name": "test", "plate": "test", "invoice": "test", "inicial_time": "test", "final_time": "test"}'
+curl -X POST https://02loveslollipop.pythonanywhere.com/insert -H "Content-Type: application/json" -H "hash: <replace with the hash from the login response>" -d '{"Id": "7", "name": "test", "plate": "test", "invoice": "test", "inicial_time": "test", "final_time": "test"}'
 
 curl -X GET https://02loveslollipop.pythonanywhere.com/get -H "hash: <replace with the hash from the login response>"
 '''

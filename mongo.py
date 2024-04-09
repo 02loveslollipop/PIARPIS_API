@@ -6,12 +6,9 @@ class MongoClient:
     def __init__(self, uri):
         self.uri = uri
         yaml_data = yaml.safe_load(open('db.yaml'))
-        print(yaml_data)
         self.db = {}
         for collection in yaml_data:
             self.db[collection] = Collection(yaml_data, collection)
-        
-        print(self.db)
          
     def __getitem__(self, key):
         return self.db
@@ -42,6 +39,7 @@ class Collection:
         
     def insert_one(self, data):
         self.data.append(data)
+        yaml.safe_dump(self.db, open('db.yaml', 'w'))
         
     def delete_one(self, query):
         #delete the first element where each key in query is in the data
@@ -53,6 +51,7 @@ class Collection:
                     break
             if found:
                 self.data.remove(item)
+                yaml.safe_dump(self.db, open('db.yaml', 'w'))
                 return True
 
 if __name__ == '__main__':

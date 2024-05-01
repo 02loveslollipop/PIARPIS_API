@@ -116,7 +116,7 @@ def addToDB():
         parking_collection = database['Parkings']
         username = len(parking_collection.data) + 1
         print(f"Adding to parking register ----> {username} {name} {plate} {invoice} {inicial_time} {final_time}\n\n")
-        parking_collection.insert_one({'Id': username, 'name': name, 'plate': plate, 'invoice': invoice, 'in_time': inicial_time, 'out_time': final_time})
+        parking_collection.insert_one({'Id': username, 'name': name, 'plate': plate, 'invoice': invoice, 'in_time': inicial_time, 'out_time': final_time, 'status': 'active'})
         return jsonify({'message': 'added to parking register'}), 200 #TODO: search a less silly message
     except Exception as e:
         print(f"Error adding to parking register ----> {e}\n\n")
@@ -134,7 +134,13 @@ def getParkingDB(): # get all the recipes of the user
         if len(parkings) == 0:
             return jsonify({'message': 'No parkings found'}), 404
         
-        response = jsonify(parkings)
+        responseList = []
+        
+        for i, parking in enumerate(parkings):
+            if parking['status'] == 'active':
+                responseList.append(parking)
+
+        response = jsonify(responseList)
         return response, 200
     except Exception as e:
         print(f"Error getting parkings ----> {e}\n\n")
@@ -142,6 +148,43 @@ def getParkingDB(): # get all the recipes of the user
 if __name__ == '__main__':
     api.run(debug=True, host='0.0.0.0', port=6970)
     
+@api.route('/delete', methods=['POST'])
+@login_required
+def deleteFromDB():
+    try:
+        id = request.json.get('Id')
+
+        database = connect_to_database()
+        parking_collection = database['Parkings']
+        username = len(parking_collection.data) + 1
+        #set the status to inactive
+        parking_collection.update_one({'Id': id}, {'status': 'inactive'})
+        #TODO: check with mongo if this is the correct way to update
+        return jsonify({'message': 'deleted from parking register'}), 200 #TODO: search a less silly message
+    except Exception as e:
+        print(f"Error deleting from parking register ----> {e}\n\n")
+        return jsonify({'message': 'error deleting from parking register'}), 500
+
+@api.route('/update', methods=['POST'])
+@login_required
+def updateDB():
+    try:
+        id = request.json.get('Id')
+        new_name = request.json.get('new_name')
+        new_plate = request.json.get('new_plate')
+        new_inicial_time = request.json.get('new_inicial_time')
+        new_final_time = request.json.get('new_final_time')
+
+        database = connect_to_database()
+        parking_collection = database['Parkings']
+        username = len(parking_collection.data) + 1
+        parking_collection.update_one({'Id': id}, {'name': new_name, 'plate': new_plate, 'in_time': new_inicial_time, 'out_time': new_final_time})
+        # TODO: check with mongo if this is the correct way to update
+        return jsonify({'message': 'updated parking register'}), 200 #TODO: search a less silly message
+    except Exception as e:
+        print(f"Error updating parking register ----> {e}\n\n")
+        return jsonify({'message': 'error updating parking register'}), 500
+
 '''
 curl -X POST https://02loveslollipop.pythonanywhere.com/login -H "Content-Type: application/json" -d '{"username": "admin@piarpis.com", "password": "admin"}'
 

@@ -53,6 +53,7 @@ class Collection:
                 self.data.remove(item)
                 yaml.safe_dump(self.db, open('db.yaml', 'w'))
                 return True
+        
 
 if __name__ == '__main__':
     import pandas as pd

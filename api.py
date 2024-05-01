@@ -145,8 +145,6 @@ def getParkingDB(): # get all the recipes of the user
     except Exception as e:
         print(f"Error getting parkings ----> {e}\n\n")
         return jsonify({'message': 'error getting parkings'}), 500
-if __name__ == '__main__':
-    api.run(debug=True, host='0.0.0.0', port=6970)
     
 @api.route('/delete', methods=['POST'])
 @login_required
@@ -184,6 +182,9 @@ def updateDB():
     except Exception as e:
         print(f"Error updating parking register ----> {e}\n\n")
         return jsonify({'message': 'error updating parking register'}), 500
+
+if __name__ == '__main__':
+    api.run(debug=True, host='0.0.0.0', port=6970)
 
 '''
 curl -X POST https://02loveslollipop.pythonanywhere.com/login -H "Content-Type: application/json" -d '{"username": "admin@piarpis.com", "password": "admin"}'

@@ -20,8 +20,8 @@ session = []
 def connect_to_database():
     try:
         client = MongoClient(conf.mongo_uri)
-        return client['db']
-    except Exception as e:
+        return client[conf.mongo_db]
+    except ConnectionError as e:
         print(f"Error connecting to database ----> {e}\n\n")
         raise e
 
@@ -115,9 +115,8 @@ def addToDB():
 
         database = connect_to_database()
         parking_collection = database['Parkings']
-        username = len(parking_collection.data) + 1
-        print(f"Adding to parking register ----> {username} {name} {plate} {invoice} {inicial_time} {final_time}\n\n")
-        parking_collection.insert_one({'Id': username, 'name': name, 'plate': plate, 'invoice': invoice, 'in_time': inicial_time, 'out_time': final_time, 'status': 'active'})
+        print(f"Adding to parking register ----> {name} {plate} {invoice} {inicial_time} {final_time}\n\n")
+        parking_collection.insert_one({'name': name, 'plate': plate, 'invoice': invoice, 'in_time': inicial_time, 'out_time': final_time, 'status': 'active'})
         return jsonify({'message': 'added to parking register'}), 200 #TODO: search a less silly message
     except Exception as e:
         print(f"Error adding to parking register ----> {e}\n\n")
@@ -131,17 +130,17 @@ def getParkingDB(): # get all the recipes of the user
 
         database = connect_to_database()
         parking_collection = database['Parkings']
-        parkings = parking_collection.data
-        if len(parkings) == 0:
-            return jsonify({'message': 'No parkings found'}), 404
-        
+        parkings = list(parking_collection.find())
+    
         responseList = []
         
         for i, parking in enumerate(parkings):
             if parking['status'] == 'active':
+                parking["_id"] = str(parking["_id"])
                 responseList.append(parking)
 
         response = jsonify(responseList)
+        
         return response, 200
     except Exception as e:
         print(f"Error getting parkings ----> {e}\n\n")
@@ -153,13 +152,17 @@ def deleteFromDB():
     try:
         id = request.json.get('Id')
 
+        try:
+            id = int(id)
+        except Exception as e:
+            print(f"Error converting id to int ----> {e}\n\n")
+            return jsonify({'message': 'the id given is not valid'}), 400
+        
         database = connect_to_database()
         parking_collection = database['Parkings']
-        username = len(parking_collection.data) + 1
-        #set the status to inactive
-        parking_collection.update_one({'Id': id}, {'status': 'inactive'})
-        #TODO: check with mongo if this is the correct way to update
-        return jsonify({'message': 'deleted from parking register'}), 200 #TODO: search a less silly message
+
+        parking_collection.update_one(filter={'id': id}, update={'$set': {'status': 'inactive'}})
+        return jsonify({'message': 'deleted from parking register'}), 200 
     except Exception as e:
         print(f"Error deleting from parking register ----> {e}\n\n")
         return jsonify({'message': 'error deleting from parking register'}), 500
@@ -195,4 +198,8 @@ curl -X GET https://02loveslollipop.pythonanywhere.com/logout -H "hash:<replace 
 curl -X POST https://02loveslollipop.pythonanywhere.com/insert -H "Content-Type: application/json" -H "hash: <replace with the hash from the login response>" -d '{"Id": "7", "name": "test", "plate": "test", "invoice": "test", "inicial_time": "test", "final_time": "test"}'
 
 curl -X GET https://02loveslollipop.pythonanywhere.com/get -H "hash: <replace with the hash from the login response>"
+
+curl -X POST https://02loveslollipop.pythonanywhere.com/delete -H "Content-Type: application/json" -H "hash: <replace with the hash from the login response>" -d '{"Id": "2"}'
+
+curl -X POST https://02loveslollipop.pythonanywhere.com/update -H "Content-Type: application/json" -H "hash: <replace with the hash from the login response>" -d '{"Id": "1", "new_name": "test", "new_plate": "test", "new_inicial_time": "test", "new_final_time": "test"}'
 '''

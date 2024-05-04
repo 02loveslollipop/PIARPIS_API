@@ -1,7 +1,8 @@
 #flask api
 import requests
 from flask import Flask, request, jsonify
-from mongo import MongoClient
+from pymongo import MongoClient
+import pymongo
 import json
 from config import config
 from functools import wraps

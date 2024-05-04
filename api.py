@@ -112,11 +112,13 @@ def addToDB():
         invoice = request.json.get('invoice')
         inicial_time = request.json.get('inicial_time')
         final_time = request.json.get('final_time')
+        
 
         database = connect_to_database()
         parking_collection = database['Parkings']
         print(f"Adding to parking register ----> {name} {plate} {invoice} {inicial_time} {final_time}\n\n")
-        parking_collection.insert_one({'name': name, 'plate': plate, 'invoice': invoice, 'in_time': inicial_time, 'out_time': final_time, 'status': 'active'})
+        id = len(list(database['Parkings'].find())) + 1
+        parking_collection.insert_one({'id': id,'name': name, 'plate': plate, 'invoice': invoice, 'in_time': inicial_time, 'out_time': final_time, 'status': 'active'})
         return jsonify({'message': 'added to parking register'}), 200 #TODO: search a less silly message
     except Exception as e:
         print(f"Error adding to parking register ----> {e}\n\n")
@@ -174,14 +176,13 @@ def updateDB():
         id = request.json.get('Id')
         new_name = request.json.get('new_name')
         new_plate = request.json.get('new_plate')
+        new_invoice = request.json.get('new_invoice')
         new_inicial_time = request.json.get('new_inicial_time')
         new_final_time = request.json.get('new_final_time')
 
         database = connect_to_database()
         parking_collection = database['Parkings']
-        username = len(parking_collection.data) + 1
-        parking_collection.update_one({'Id': id}, {'name': new_name, 'plate': new_plate, 'in_time': new_inicial_time, 'out_time': new_final_time})
-        # TODO: check with mongo if this is the correct way to update
+        parking_collection.update_one({'id': id}, {'$set': {'name': new_name, 'plate': new_plate, 'in_time': new_inicial_time, 'out_time': new_final_time, 'invoice': new_invoice}})
         return jsonify({'message': 'updated parking register'}), 200 #TODO: search a less silly message
     except Exception as e:
         print(f"Error updating parking register ----> {e}\n\n")
@@ -201,5 +202,5 @@ curl -X GET https://02loveslollipop.pythonanywhere.com/get -H "hash: <replace wi
 
 curl -X POST https://02loveslollipop.pythonanywhere.com/delete -H "Content-Type: application/json" -H "hash: <replace with the hash from the login response>" -d '{"Id": "2"}'
 
-curl -X POST https://02loveslollipop.pythonanywhere.com/update -H "Content-Type: application/json" -H "hash: <replace with the hash from the login response>" -d '{"Id": "1", "new_name": "test", "new_plate": "test", "new_inicial_time": "test", "new_final_time": "test"}'
+curl -X POST https://02loveslollipop.pythonanywhere.com/update -H "Content-Type: application/json" -H "hash: <replace with the hash from the login response>" -d '{"Id": "4", "new_name": "test", "new_plate": "test", "new_inicial_time": "test", "new_final_time": "test", "new_invoice": "test"}'
 '''

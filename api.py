@@ -156,6 +156,7 @@ def deleteFromDB():
 
         try:
             id = int(id)
+            print(id)
         except Exception as e:
             print(f"Error converting id to int ----> {e}\n\n")
             return jsonify({'message': 'the id given is not valid'}), 400
@@ -174,6 +175,14 @@ def deleteFromDB():
 def updateDB():
     try:
         id = request.json.get('Id')
+        
+        try:
+            id = int(id)
+        except Exception as e:
+            print(f"Error converting id to int ----> {e}\n\n")
+            return jsonify({'message': 'the id given is not valid'}), 400
+        
+        print(f"Updating parking register ----> {id}\n\n")
         new_name = request.json.get('new_name')
         new_plate = request.json.get('new_plate')
         new_invoice = request.json.get('new_invoice')
